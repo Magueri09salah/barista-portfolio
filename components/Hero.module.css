@@ -1,0 +1,187 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(75% 60% at 78% 30%, rgba(199, 144, 60, 0.22), transparent 62%),
+    radial-gradient(60% 70% at 12% 82%, rgba(233, 223, 212, 0.9), transparent 65%),
+    linear-gradient(180deg, var(--ivory-100) 0%, var(--ivory-200) 55%, var(--beige-100) 100%);
+}
+
+/* Two real columns — the portrait can never overlap the headline. */
+.inner {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) min(38vw, 500px);
+  gap: var(--s11);
+  align-items: center;
+  min-height: 100svh;
+  padding-block: var(--s11) var(--s10);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s5);
+}
+
+/* The portrait bleeds to the right edge and runs the full hero height. */
+.portrait {
+  position: relative;
+  align-self: stretch;
+  margin-right: calc(var(--gutter) * -1);
+  margin-top: calc(var(--s11) * -1);
+  margin-bottom: calc(var(--s10) * -1);
+  border-radius: 0 0 0 var(--r-2xl);
+  overflow: hidden;
+}
+
+/* No max-width — the column already constrains it to a two-line break. */
+.title {
+  margin-block: var(--s1);
+}
+.title em {
+  font-style: italic;
+  font-family: var(--font-quote), serif;
+  font-weight: 300;
+  color: var(--accent-gold-deep);
+}
+
+.lead {
+  max-width: 44ch;
+  color: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s4);
+  margin-top: var(--s3);
+}
+
+.specRow {
+  align-self: stretch;
+  margin-top: var(--s7);
+  padding-top: var(--s6);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s4) var(--s6);
+  align-items: baseline;
+}
+.specNote {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: var(--t-cap);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-gold-deep);
+}
+
+/* ---- floating coffee beans ---- */
+.beans {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2;
+}
+.bean {
+  position: absolute;
+  width: 13px;
+  height: 17px;
+  border-radius: 50% / 46% 46% 54% 54%;
+  background: var(--coffee-600);
+  opacity: 0.14;
+  animation: float 9s ease-in-out infinite alternate;
+}
+.bean::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: 50%;
+  border-left: 1px solid var(--ivory-100);
+  opacity: 0.55;
+}
+@keyframes float {
+  from {
+    transform: translateY(0) rotate(var(--rot, 0deg));
+  }
+  to {
+    transform: translateY(-38px) rotate(calc(var(--rot, 0deg) + 22deg));
+  }
+}
+
+/* ---- steam, rising off the portrait ---- */
+.steam {
+  position: absolute;
+  left: 34%;
+  bottom: 32%;
+  display: flex;
+  gap: 14px;
+  pointer-events: none;
+  z-index: 3;
+}
+.steam span {
+  width: 3px;
+  height: 96px;
+  border-radius: var(--r-full);
+  filter: blur(7px);
+  opacity: 0;
+  background: linear-gradient(to top, transparent, var(--ivory-50));
+  animation: steam 5.5s ease-in-out infinite;
+}
+.steam span:nth-child(2) {
+  animation-delay: 0.9s;
+  height: 126px;
+}
+.steam span:nth-child(3) {
+  animation-delay: 1.9s;
+}
+@keyframes steam {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scaleX(1);
+  }
+  30% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-76px) scaleX(1.9);
+  }
+}
+
+@media (max-width: 1200px) {
+  .inner {
+    gap: var(--s9);
+  }
+}
+
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-block: var(--s12) var(--s11);
+    gap: var(--s9);
+  }
+  .portrait {
+    order: -1;
+    align-self: auto;
+    height: 52vh;
+    margin: 0;
+    border-radius: var(--r-xl);
+  }
+  .specRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s3);
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "barista-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Premium portfolio for a specialty coffee professional. Design system mirrors the Figma file.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "^15.5.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "typescript": "^5.8.3"
+  }
+}

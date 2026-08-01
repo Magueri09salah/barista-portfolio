@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { profile } from "@/lib/content";
+import { photo } from "@/lib/photos";
 import { ButtonLink, Eyebrow, Icon, Photo, Spec } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./Hero.module.css";
@@ -112,7 +113,13 @@ export function Hero() {
         </div>
 
         <div className={s.portrait}>
-          <Photo tone="gold" label="Portrait · bar service, 07:40" />
+          <Photo
+            tone="gold"
+            label="Specialty bar · in service"
+            priority
+            sizes="(max-width: 900px) 100vw, 38vw"
+            {...photo("hero")}
+          />
           <div className={s.steam} aria-hidden="true">
             <span />
             <span />

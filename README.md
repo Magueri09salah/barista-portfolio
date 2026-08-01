@@ -117,19 +117,29 @@ Sections are server components; only those needing browser APIs (`Nav`, `Hero`,
 
 ---
 
+## Photography
+
+29 images are wired and rendering through `next/image`. They are **licensed stock
+photos from Unsplash** — see `public/images/CREDITS.md` — not photographs of Mohammed
+or of the bars in his history.
+
+Every slot lives in `lib/photos.ts`. To replace one, drop the new file into
+`public/images/` and point that slot's `src` at it. No component or layout changes.
+`SHOTLIST.md` lists what to shoot, at what crop, in priority order.
+
+Two deliberate constraints while the photos are stock:
+
+- **No identifiable faces in the hero or About slots.** A stranger's portrait next to
+  his name reads as "this is me". Anonymous bars, hands and equipment do not.
+- **Alt text describes the subject generically** — "a barista", "an espresso machine" —
+  and never claims the person shown is him.
+
+Both should change when real photos go in.
+
 ## Before this goes live
 
-1. **Photography.** `<Photo>` renders a warm gradient stand-in with film grain in four
-   tones. Swap its body for `next/image` — every call site already sits in a sized,
-   `position: relative` parent, so `fill` works with no layout changes:
-
-   ```tsx
-   <Image src={src} alt={alt} fill sizes="(max-width: 900px) 100vw, 40vw"
-          style={{ objectFit: "cover" }} />
-   ```
-
-   Worth shooting: a portrait, the bar at open, a pour in progress, latte art, the
-   V60/Chemex setup, and a group-head clean.
+1. **Replace the stock photos** with real ones, starting with the eight priority
+   shots in `SHOTLIST.md`. This is the single biggest upgrade available.
 
 2. **Contact form.** `components/Contact.tsx` validates then shows a message telling
    the visitor to email directly. Point `onSubmit` at a real endpoint (a route handler

@@ -1,15 +1,62 @@
 import type { ReactNode, AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
+import Image from "next/image";
 import s from "./ui.module.css";
 
 type Tone = "dark" | "light" | "gold" | "base";
 
 /* ------------------------------------------------------------------
-   Photo — placeholder for commissioned photography.
-   Always absolutely positioned; give it a sized, relative parent.
+   Photo
+
+   Give it a `src` and it renders a real photograph via next/image.
+   Leave `src` off and it falls back to a warm gradient placeholder,
+   so the layout is complete before the shoot happens.
+
+   Always absolutely positioned — the parent must be sized and
+   `position: relative`. Every call site already is.
    ------------------------------------------------------------------ */
-export function Photo({ tone = "base", label }: { tone?: Tone; label?: string }) {
+export function Photo({
+  tone = "base",
+  label,
+  src,
+  alt,
+  priority = false,
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+}: {
+  tone?: Tone;
+  label?: string;
+  /** Path under /public, e.g. "/images/hero-portrait.jpg". */
+  src?: string;
+  /** Required whenever `src` is set — describes the photo for screen readers. */
+  alt?: string;
+  /** Set on the hero image only, so it is not lazy-loaded. */
+  priority?: boolean;
+  sizes?: string;
+}) {
   const toneClass =
-    tone === "light" ? s.photoLight : tone === "dark" ? s.photoDark : tone === "gold" ? s.photoGold : "";
+    tone === "light"
+      ? s.photoLight
+      : tone === "dark"
+        ? s.photoDark
+        : tone === "gold"
+          ? s.photoGold
+          : "";
+
+  if (src) {
+    return (
+      <div className={s.photoFrame}>
+        <Image
+          src={src}
+          alt={alt ?? ""}
+          fill
+          sizes={sizes}
+          priority={priority}
+          className={s.photoImg}
+        />
+        {label ? <span className={s.photoLabel}>{label}</span> : null}
+      </div>
+    );
+  }
+
   return (
     <div className={`${s.photo} ${toneClass}`} aria-hidden="true">
       {label ? <span className={s.photoLabel}>{label}</span> : null}

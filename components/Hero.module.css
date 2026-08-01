@@ -43,6 +43,26 @@
   overflow: hidden;
 }
 
+/* Scrim so the transparent nav keeps its contrast where it crosses the
+   photo. Without it, dark nav links land on dark photography.
+   Desktop only — below 900px the portrait sits clear of the nav. */
+@media (min-width: 901px) {
+  .portrait::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 200px;
+    z-index: 4;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      var(--ivory-100) 0%,
+      rgba(247, 245, 242, 0.82) 40%,
+      rgba(247, 245, 242, 0) 100%
+    );
+  }
+}
+
 /* No max-width — the column already constrains it to a two-line break. */
 .title {
   margin-block: var(--s1);

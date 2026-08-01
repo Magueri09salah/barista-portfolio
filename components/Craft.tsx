@@ -1,4 +1,5 @@
 import { methods } from "@/lib/content";
+import { photo } from "@/lib/photos";
 import { Badge, Photo, SectionHead, Spec } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
@@ -20,7 +21,11 @@ export function Craft() {
           {methods.map((method, i) => (
             <Reveal key={method.code} as="article" className={s.drink} delay={(i % 3) * 80}>
               <div className={s.drinkPhoto}>
-                <Photo tone={method.tone} />
+                <Photo
+                  tone={method.tone}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  {...photo(method.code)}
+                />
                 <span className={s.drinkCode}>{method.code}</span>
                 <span className={s.drinkDiff}>
                   <Badge

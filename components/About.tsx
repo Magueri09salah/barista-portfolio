@@ -1,6 +1,7 @@
 import { aboutClosing, aboutParagraphs, aboutQuote, stats } from "@/lib/content";
 import { Eyebrow, Photo } from "./ui/Primitives";
 import { Counter } from "./ui/Counter";
+import { photo } from "@/lib/photos";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
@@ -10,7 +11,12 @@ export function About() {
       <div className="shell">
         <div className={s.aboutGrid}>
           <Reveal className={s.aboutPortrait}>
-            <Photo tone="light" label="Portrait · Safi, Morocco" />
+            <Photo
+              tone="light"
+              label="The craft, up close"
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              {...photo("about")}
+            />
           </Reveal>
 
           <div className={s.aboutBody}>

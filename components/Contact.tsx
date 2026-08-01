@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { enquiryTypes, profile } from "@/lib/content";
+import { photo } from "@/lib/photos";
 import { Badge, Button, Icon, Photo, SectionHead } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
@@ -46,7 +47,12 @@ export function Contact() {
         <div className={s.contactGrid}>
           <div>
             <Reveal className={s.contactPhoto}>
-              <Photo tone="gold" label="Bar, end of service" />
+              <Photo
+                tone="gold"
+                label="Bar, end of service"
+                sizes="(max-width: 900px) 100vw, 45vw"
+                {...photo("contact")}
+              />
             </Reveal>
 
             <dl className={s.contactMeta}>

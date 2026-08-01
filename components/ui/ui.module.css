@@ -110,6 +110,28 @@
     radial-gradient(120% 90% at 25% 15%, rgba(239, 220, 187, 0.9), transparent 60%),
     linear-gradient(150deg, var(--caramel-300) 0%, var(--coffee-600) 60%, var(--espresso-900) 100%);
 }
+/* Real photograph — same footprint as the gradient placeholder. */
+.photoFrame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--bg-sand);
+  isolation: isolate;
+}
+.photoImg {
+  object-fit: cover;
+  object-position: center;
+}
+/* Cinematic vignette so photography sits in the same world as the placeholders. */
+.photoFrame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: inset 0 0 64px rgba(32, 24, 19, 0.28);
+}
+
 .photoLabel {
   position: absolute;
   left: var(--s5);

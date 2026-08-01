@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { milestones } from "@/lib/content";
+import { photo } from "@/lib/photos";
 import { Photo, SectionHead, Spec } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
@@ -72,7 +73,12 @@ export function Journey() {
           >
             <div className={s.milestoneYear}>{milestone.year}</div>
             <div className={s.milestonePhoto}>
-              <Photo tone={milestone.tone} label={milestone.caption} />
+              <Photo
+                tone={milestone.tone}
+                label={milestone.caption}
+                sizes="(max-width: 640px) 78vw, 420px"
+                {...photo(milestone.range)}
+              />
             </div>
             <Spec
               variant="inverse"

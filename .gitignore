@@ -12,3 +12,10 @@ yarn-error.log*
 next-env.d.ts
 .vercel
 *.tsbuildinfo
+
+# Submitted setup requests — real customer data, never committed.
+/.data/
+
+
+# Prisma Client is generated from prisma/schema.prisma — run `npm run db:generate`.
+/lib/generated/

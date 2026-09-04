@@ -1,0 +1,96 @@
+/* ============================================================
+   /services — the setup service page
+   ============================================================ */
+
+.intro {
+  /* Clears the fixed nav. */
+  padding-top: calc(var(--s13) + 40px);
+}
+.title {
+  max-width: 18ch;
+  margin-top: var(--s6);
+}
+.lead {
+  max-width: 62ch;
+  color: var(--text-secondary);
+  margin-top: var(--s7);
+}
+.introSpec {
+  margin-top: var(--s9);
+  padding-top: var(--s7);
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ---------------------------------------------------------- Phase summary */
+.phasesTitle {
+  max-width: 22ch;
+  margin-top: var(--s6);
+}
+.phaseList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--s7);
+  margin-top: var(--s10);
+}
+.phase {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s6);
+  padding: var(--s7);
+  background: var(--bg-raised);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-1);
+}
+.phaseIndex {
+  font-family: var(--font-display), serif;
+  font-size: var(--t-h2);
+  line-height: 1;
+  color: var(--accent-gold-soft);
+}
+.phaseBlurb {
+  color: var(--text-muted);
+  margin-top: var(--s3);
+}
+.phaseItems {
+  margin-top: var(--s5);
+  padding-top: var(--s5);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.phaseItems li {
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  padding-left: var(--s5);
+  position: relative;
+}
+.phaseItems li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 8px;
+  height: 1px;
+  background: var(--accent-gold);
+}
+
+/* ------------------------------------------------------------- Form intro */
+.formTitle {
+  max-width: 18ch;
+  margin-top: var(--s6);
+}
+.formLead {
+  max-width: 58ch;
+  color: var(--text-secondary);
+  margin-top: var(--s5);
+}
+
+@media (max-width: 640px) {
+  .phase {
+    grid-template-columns: 1fr;
+    gap: var(--s4);
+    padding: var(--s6);
+  }
+}

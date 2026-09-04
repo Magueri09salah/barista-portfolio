@@ -1,13 +1,26 @@
-# Mohammed Qasbili — Barista Portfolio
+# Mohammed Qasbili — Barista Portfolio & Setup Service
 
-A premium editorial portfolio for a working barista, built from his CV.
-Next.js 15 (App Router) + TypeScript + CSS Modules. No UI or CSS framework.
+A premium editorial portfolio for a working barista, built from his CV, plus a
+lead-generation flow for his coffee shop setup consultancy and the back office
+that receives it.
+
+Next.js 15 (App Router) + TypeScript + CSS Modules. No UI or CSS framework, and
+no runtime dependencies beyond React and Next itself.
 
 ```bash
-npm install
-npm run dev      # http://localhost:3000
+npm install                # also runs `prisma generate`
+cp .env.example .env       # then fill in DATABASE_URL and ADMIN_PASSWORD
+npm run db:deploy          # create the tables
+npm run dev                # http://localhost:3000
 npm run build
 ```
+
+| Route | What it is |
+|---|---|
+| `/` | The portfolio — the barista, for hire |
+| `/services` | The setup service, and the request form |
+| `/admin` | Back office inbox (password) |
+| `/admin/requests/[id]` | One request, with status and private notes |
 
 ---
 
@@ -117,6 +130,120 @@ Sections are server components; only those needing browser APIs (`Nav`, `Hero`,
 
 ---
 
+## The setup service and its back office
+
+Two halves of one feature: a public request form at `/services`, and a private
+inbox at `/admin` that receives what it sends.
+
+```
+prisma/
+  schema.prisma       the SetupRequest model
+  migrations/         generated SQL, committed — the schema's history
+prisma7.config.ts     where Prisma reads the connection string
+lib/
+  catalogue.ts        the 5 phases and 23 services — single source of truth
+  requests.ts         request shape, server-side validation, derived views
+  prisma.ts           the Prisma client singleton (server only)
+  store.ts            every database query in the app (server only)
+  generated/prisma/   generated client — gitignored, rebuilt by db:generate
+  auth.ts             password check and signed session cookie
+middleware.ts         gates /admin and /api/admin
+app/
+  services/           the public page + form
+  admin/
+    login/            password screen
+    (dash)/           inbox and request detail, behind the shared chrome
+  api/
+    requests/         POST — the public endpoint the form submits to
+    admin/            login, and PATCH/DELETE on a single request
+components/
+  setup/RequestForm   7-step wizard, client component
+  admin/              login form, status controls, sign out
+```
+
+### The catalogue is the contract
+
+`lib/catalogue.ts` defines every service that can be requested. The form renders
+from it, the API validates against it, and the back office renders stored ids
+back through it. A service id that is not in the file cannot be stored, and a
+stored id always has a label to display.
+
+Add a service by adding it there — nothing else changes. **Never rename an
+existing `id`**: ids are written into stored requests, so renaming one orphans
+every request that referenced it. Changing a `label` or `detail` is always safe.
+
+### Where requests are stored
+
+Postgres, through Prisma 7. Neon's free tier is enough — the only thing to know
+about it is that an idle branch auto-suspends, so the first query after a quiet
+period takes about half a second.
+
+**Two URLs.** `DATABASE_URL` is Neon's pooled string, used by the running app.
+`DIRECT_URL` is used by the Prisma CLI, because a migration issues session-level
+statements that PgBouncer in transaction mode cannot carry.
+
+Build `DIRECT_URL` by deleting the six characters `-pooler` from `DATABASE_URL`
+and changing nothing else — not the region, not the `c-N` cluster prefix, not the
+query string:
+
+```
+pooled   ...@ep-cool-name-a1b2c3-pooler.c-4.us-east-2.aws.neon.tech/neondb?...
+direct   ...@ep-cool-name-a1b2c3.c-4.us-east-2.aws.neon.tech/neondb?...
+```
+
+Get this wrong and Prisma reports `P1000: Authentication failed`, which reads
+like a bad password but is really a host that exists and does not know you. On a
+plain Postgres with one endpoint, set `DATABASE_URL` alone.
+
+> **If `next start` behaves strangely** — middleware firing on every route,
+> stale pages — check for a leftover `next dev` process. Dev and build share
+> `.next`, so a dev server running in the background will overwrite a production
+> build underneath you. `rm -rf .next && npm run build` fixes it.
+
+| Command | What it does |
+|---|---|
+| `npm run db:migrate` | Create and apply a migration after editing the schema |
+| `npm run db:deploy` | Apply existing migrations — this is the one to run on the server |
+| `npm run db:generate` | Regenerate the client (also runs on `npm install`) |
+| `npm run db:studio` | Browse and edit the data in a GUI |
+
+**`lib/store.ts` is the only module that touches the database.** Everything above
+it works in the application's own `SetupRequest` type from `lib/requests.ts`, and
+the store maps Prisma's rows onto it — `Date` becomes an ISO string, `Json`
+becomes a checked `Record<string, string>`. That boundary is deliberate: the
+schema can change, or the database be swapped, without touching a page.
+
+Prisma 7 talks to Postgres through the `pg` driver adapter rather than its own
+engine, so the pool is `pg`'s and lives in `lib/prisma.ts`. It is cached on
+`globalThis` in development, because otherwise every file save would open a new
+pool and exhaust the connection limit within minutes.
+
+The generated client is written to `lib/generated/prisma` as TypeScript and is
+gitignored — `npm install` regenerates it via `postinstall`. Two consequences
+worth knowing: a fresh clone needs no `.env` to install, and plain `node` cannot
+import that client, because its internal imports are extensionless and only a
+bundler resolves them. Any standalone script that needs the database should use
+`pg` and raw SQL rather than Prisma Client.
+
+### Access
+
+Set `ADMIN_PASSWORD` in `.env`. Without it the back office refuses every
+request rather than opening itself to the internet — it does not fall back to
+"no password". Optionally set `ADMIN_SECRET` so that changing the password does
+not sign you out.
+
+The session is a signed cookie with a fourteen-day expiry; there is no session
+table and nothing to clean up. `middleware.ts` is the front door, and the route
+handlers under `/api/admin` check the session again themselves.
+
+> **Dev-mode note.** In `next dev`, Next inlines server-side values into the RSC
+> payload for its DevTools, which means the raw contents of the store appear in
+> the HTML of admin pages. This does not happen in a production build — verified
+> against `next build && next start`. Do not run the back office in dev mode on a
+> public address.
+
+---
+
 ## Photography
 
 29 images are wired and rendering through `next/image`. They are **licensed stock
@@ -141,9 +268,13 @@ Both should change when real photos go in.
 1. **Replace the stock photos** with real ones, starting with the eight priority
    shots in `SHOTLIST.md`. This is the single biggest upgrade available.
 
-2. **Contact form.** `components/Contact.tsx` validates then shows a message telling
-   the visitor to email directly. Point `onSubmit` at a real endpoint (a route handler
-   under `app/api/`, or Formspree/Resend) before launch.
+2. **Contact form.** `components/Contact.tsx` — the enquiry form on the home page —
+   still validates and then tells the visitor to email directly. The setup form at
+   `/services` is fully wired; this one is not. Point its `onSubmit` at a route
+   handler under `app/api/` before launch, or drop it in favour of `/services`.
+
+   **Set `ADMIN_PASSWORD` to something long** before the site is public. The value
+   currently in `.env` is a development placeholder.
 
 3. **Domain and OG image.** Set `metadataBase` in `app/layout.tsx` once there is a
    domain, and add an OG image.

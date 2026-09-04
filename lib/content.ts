@@ -31,16 +31,22 @@ export const profile = {
   ],
 } as const;
 
-export const navLinks = [
-  { href: "#about", label: "About" },
-  { href: "#philosophy", label: "Approach" },
-  { href: "#journey", label: "Journey" },
-  { href: "#craft", label: "Craft" },
-  { href: "#skills", label: "Skills" },
-  { href: "#credentials", label: "Credentials" },
-  { href: "#services", label: "What I do" },
-  { href: "#contact", label: "Contact" },
-] as const;
+/**
+ * Hrefs are rooted at "/" rather than bare hashes so the nav also works from
+ * /services, where "#about" would resolve to nothing.
+ */
+export type NavLink = { href: string; label: string; highlight?: boolean };
+
+export const navLinks: NavLink[] = [
+  { href: "/#about", label: "About" },
+  { href: "/#philosophy", label: "Approach" },
+  { href: "/#journey", label: "Journey" },
+  { href: "/#craft", label: "Craft" },
+  { href: "/#skills", label: "Skills" },
+  { href: "/#credentials", label: "Credentials" },
+  { href: "/services", label: "Open a café", highlight: true },
+  { href: "/#contact", label: "Contact" },
+];
 
 /* ---------------------------------------------------------------- About */
 
@@ -318,23 +324,23 @@ export const methods: Method[] = [
     bestFor: "Single cups, quick turnaround",
     tone: "dark",
   },
-  {
-    code: "FRP",
-    name: "French Press",
-    level: "Manual brew",
-    spec: [
-      { value: "30", unit: "g" },
-      { value: "500", unit: "ml" },
-      { value: "4:00", unit: "" },
-    ],
-    notes: ["Full body", "Rich", "Rounded"],
-    body: "Full immersion, no paper, all the oils left in. Break the crust at four minutes, skim, then let it settle before pouring — most of the sediment complaints come from pressing too hard, too early.",
-    ratio: "1:16",
-    grind: "Coarse",
-    time: "4:00",
-    bestFor: "Darker roasts, groups",
-    tone: "light",
-  },
+  // {
+  //   code: "FRP",
+  //   name: "French Press",
+  //   level: "Manual brew",
+  //   spec: [
+  //     { value: "30", unit: "g" },
+  //     { value: "500", unit: "ml" },
+  //     { value: "4:00", unit: "" },
+  //   ],
+  //   notes: ["Full body", "Rich", "Rounded"],
+  //   body: "Full immersion, no paper, all the oils left in. Break the crust at four minutes, skim, then let it settle before pouring — most of the sediment complaints come from pressing too hard, too early.",
+  //   ratio: "1:16",
+  //   grind: "Coarse",
+  //   time: "4:00",
+  //   bestFor: "Darker roasts, groups",
+  //   tone: "light",
+  // },
   {
     code: "CLD",
     name: "Cold Brew",

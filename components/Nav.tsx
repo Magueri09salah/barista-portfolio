@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { navLinks, profile } from "@/lib/content";
 import { Icon } from "./ui/Primitives";
@@ -43,9 +44,9 @@ export function Nav() {
   return (
     <header className={`${s.nav} ${stuck ? s.stuck : ""}`}>
       <div className={`shell ${s.inner}`}>
-        <a className={s.mark} href="#top">
+        <Link className={s.mark} href="/">
           {profile.firstName} <span>{profile.lastName}</span>
-        </a>
+        </Link>
 
         <nav
           id="primary-nav"
@@ -53,9 +54,14 @@ export function Nav() {
           aria-label="Primary"
         >
           {navLinks.map((link) => (
-            <a key={link.href} href={link.href} onClick={() => setOpen(false)}>
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setOpen(false)}
+              className={link.highlight ? s.cta : undefined}
+            >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 

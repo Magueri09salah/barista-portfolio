@@ -1,0 +1,450 @@
+/* ============================================================
+   SETUP REQUEST FORM
+   Same token layer as the rest of the site — no new colours,
+   no new spacing values, no framework.
+   ============================================================ */
+
+.wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: var(--s12);
+  align-items: start;
+  margin-top: var(--s10);
+}
+
+/* ------------------------------------------------------------- Step rail */
+.rail {
+  position: sticky;
+  top: 120px;
+}
+.railList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+.railStep {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s4);
+  padding: var(--s3) var(--s4);
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-md);
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition:
+    background var(--d-base) var(--ease),
+    color var(--d-base) var(--ease);
+}
+.railStep:hover {
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+}
+.railStep[data-state="current"] {
+  background: var(--bg-raised);
+  color: var(--text-primary);
+  box-shadow: var(--elev-1);
+}
+.railStep[data-state="done"] {
+  color: var(--text-secondary);
+}
+.railIndex {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+.railStep[data-state="current"] .railIndex {
+  color: var(--accent-gold-deep);
+}
+.railLabel {
+  font-size: var(--t-sm);
+  line-height: 1.4;
+}
+.railCount {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding-inline: 6px;
+  border-radius: var(--r-full);
+  background: var(--accent-gold);
+  color: var(--text-on-accent);
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  line-height: 1;
+}
+.railBar {
+  height: 2px;
+  margin-top: var(--s6);
+  background: var(--border-subtle);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+.railBar span {
+  display: block;
+  height: 100%;
+  background: var(--accent-gold);
+  transition: width var(--d-base) var(--ease);
+}
+
+/* ---------------------------------------------------------------- Panel */
+.panel {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-xl);
+  padding: var(--s10);
+  box-shadow: var(--elev-2);
+}
+.panelSpec {
+  margin-bottom: var(--s6);
+}
+.panelTitle {
+  margin: 0;
+}
+.panelTitle:focus-visible {
+  outline: none;
+}
+.panelBlurb {
+  color: var(--text-secondary);
+  max-width: 60ch;
+  margin-top: var(--s4);
+}
+
+/* ------------------------------------------------------- Checkbox cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--s4);
+  margin: var(--s8) 0 0;
+  padding: 0;
+  border: 0;
+}
+.card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s4);
+  align-items: start;
+  padding: var(--s5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  background: var(--bg-canvas);
+  cursor: pointer;
+  transition:
+    border-color var(--d-base) var(--ease),
+    background var(--d-base) var(--ease),
+    box-shadow var(--d-base) var(--ease),
+    transform var(--d-base) var(--ease);
+}
+.card:hover {
+  border-color: var(--border-default);
+  transform: translateY(-1px);
+}
+.card[data-on="true"] {
+  border-color: var(--accent-gold);
+  background: var(--bg-raised);
+  box-shadow: var(--glow-gold);
+}
+/* The real input stays in the accessibility tree and takes focus; the
+   visible box is drawn by .cardBox. */
+.cardInput {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+.cardBox {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  margin-top: 2px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-sm);
+  background: var(--bg-raised);
+  display: grid;
+  place-items: center;
+  color: transparent;
+  transition:
+    background var(--d-fast) var(--ease),
+    border-color var(--d-fast) var(--ease),
+    color var(--d-fast) var(--ease);
+}
+.cardBox svg {
+  width: 14px;
+  height: 14px;
+}
+.card[data-on="true"] .cardBox {
+  background: var(--accent-gold);
+  border-color: var(--accent-gold);
+  color: var(--text-on-accent);
+}
+.cardInput:focus-visible ~ .cardBox {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 3px;
+}
+.cardText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.cardLabel {
+  font-weight: 600;
+  font-size: var(--t-base);
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+.cardDetail {
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------- Radio chip rows */
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  margin: var(--s8) 0 0;
+  padding: 0;
+  border: 0;
+}
+.choiceLegend {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0;
+  margin-bottom: var(--s2);
+}
+.chip {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--s4);
+  padding: var(--s4) var(--s5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-full);
+  background: var(--bg-canvas);
+  cursor: pointer;
+  transition:
+    border-color var(--d-base) var(--ease),
+    background var(--d-base) var(--ease);
+}
+.chip:hover {
+  border-color: var(--border-default);
+}
+.chip[data-on="true"] {
+  border-color: var(--accent-gold);
+  background: var(--caramel-200);
+}
+.chip:has(.cardInput:focus-visible) {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 3px;
+}
+.chipLabel {
+  font-weight: 600;
+  font-size: var(--t-sm);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.chipDetail {
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------- Fields */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  margin-top: var(--s8);
+}
+.field label {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.field input,
+.field textarea {
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  padding: var(--s4) var(--s5);
+  color: var(--text-primary);
+  transition:
+    border-color var(--d-base) var(--ease),
+    box-shadow var(--d-base) var(--ease);
+}
+.field textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.7;
+}
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--coffee-300);
+}
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(199, 144, 60, 0.16);
+}
+.pairs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--s6);
+}
+.pairs .field {
+  margin-top: var(--s8);
+}
+
+/* --------------------------------------------------------------- Review */
+.review {
+  margin-top: var(--s9);
+  padding: var(--s6);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--r-lg);
+  background: var(--bg-canvas);
+}
+.reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  margin-top: var(--s5);
+}
+.reviewList li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+.reviewCat {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-gold-deep);
+}
+.reviewItems {
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.reviewEmpty {
+  margin-top: var(--s3);
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------- Errors */
+.errors {
+  margin-top: var(--s7);
+  padding: var(--s5);
+  border-radius: var(--r-md);
+  background: var(--caramel-200);
+  color: var(--coffee-700);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+/* -------------------------------------------------------------- Actions */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s5);
+  margin-top: var(--s9);
+  padding-top: var(--s7);
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ----------------------------------------------------------- Sent state */
+.done {
+  max-width: 62ch;
+  margin: var(--s12) auto var(--s8);
+  text-align: center;
+}
+.doneMark {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto var(--s7);
+  border-radius: 50%;
+  background: var(--accent-gold);
+  color: var(--text-on-accent);
+}
+.doneLead {
+  color: var(--text-secondary);
+  margin-top: var(--s5);
+}
+.doneSpec {
+  justify-content: center;
+  margin-top: var(--s7);
+}
+.doneNote {
+  margin-top: var(--s6);
+}
+
+/* --------------------------------------------------------- Breakpoints */
+@media (max-width: 1024px) {
+  .wrap {
+    grid-template-columns: 1fr;
+    gap: var(--s8);
+  }
+  .rail {
+    position: static;
+  }
+  .railList {
+    flex-direction: row;
+    gap: var(--s2);
+    overflow-x: auto;
+    padding-bottom: var(--s2);
+    scrollbar-width: thin;
+  }
+  .railStep {
+    width: auto;
+    white-space: nowrap;
+  }
+  .railLabel {
+    display: none;
+  }
+  .railStep[data-state="current"] .railLabel {
+    display: inline;
+  }
+  .panel {
+    padding: var(--s8);
+  }
+}
+
+@media (max-width: 640px) {
+  .panel {
+    padding: var(--s6);
+    border-radius: var(--r-lg);
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .chip {
+    grid-template-columns: 1fr;
+    gap: var(--s1);
+    border-radius: var(--r-lg);
+  }
+  .chipLabel {
+    white-space: normal;
+  }
+  .actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .actions > * {
+    justify-content: center;
+  }
+}

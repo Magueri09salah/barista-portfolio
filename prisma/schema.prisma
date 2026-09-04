@@ -1,0 +1,62 @@
+// Setup requests sent from /services, read in the back office at /admin.
+//
+// The application's own type lives in lib/requests.ts and is what the rest of
+// the code passes around; lib/store.ts maps rows to it. Prisma is an
+// implementation detail of the store, deliberately not a type that leaks into
+// components.
+//
+//   npm run db:migrate    create and apply a migration in development
+//   npm run db:deploy     apply existing migrations on the server
+//   npm run db:studio     browse the data
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Lowercase to match the string union in lib/requests.ts exactly, so a status
+// read from the database needs no translation on the way out.
+enum RequestStatus {
+  new
+  contacted
+  quoted
+  won
+  lost
+}
+
+model SetupRequest {
+  id        String        @id @default(cuid())
+  createdAt DateTime      @default(now())
+  status    RequestStatus @default(new)
+  /// Cleared the first time the request is opened in the back office.
+  unread    Boolean       @default(true)
+
+  name  String
+  email String
+  phone String
+  city  String @default("")
+
+  /// Ids from the `timelines` / `budgets` lists in lib/catalogue.ts.
+  timeline String @default("")
+  budget   String @default("")
+
+  /// Service item ids, validated against lib/catalogue.ts before they land here.
+  services String[]
+
+  /// Per-phase free text, keyed by category id. Only non-empty entries stored.
+  categoryNotes Json   @default("{}")
+  message       String @default("")
+
+  /// Private, written in the back office. Never exposed publicly.
+  adminNotes String @default("")
+
+  // The inbox is always newest-first, and the status filters are the only
+  // other access path.
+  @@index([createdAt(sort: Desc)])
+  @@index([status])
+  @@map("setup_requests")
+}

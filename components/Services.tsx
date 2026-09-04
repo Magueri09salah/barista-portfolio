@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { services } from "@/lib/content";
+import { totalServiceCount } from "@/lib/catalogue";
 import { Icon, SectionHead } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
@@ -26,6 +28,24 @@ export function Services() {
             </Reveal>
           ))}
         </div>
+
+        {/* The other half of the offer: not being hired onto a bar, but
+            building one. Sits here because it is the same evidence. */}
+        <Reveal className={s.setupBand}>
+          <div>
+            <p className={s.setupKicker}>Opening your own place?</p>
+            <h3 className="h3">I set coffee shops up from nothing.</h3>
+            <p className={`bodyLg ${s.setupBody}`}>
+              Branding, equipment specification, menu and costing, bar layout, POS and staff
+              training — {totalServiceCount} pieces of work across five phases. Choose the parts you
+              need and send it through.
+            </p>
+          </div>
+          <Link className={s.setupLink} href="/services">
+            See the setup service
+            <Icon name="arrowRight" size={20} />
+          </Link>
+        </Reveal>
       </div>
     </section>
   );

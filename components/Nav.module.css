@@ -66,6 +66,23 @@
   transform-origin: left;
 }
 
+/* The one link that goes somewhere other than down this page. Given a pill so
+   it reads as an action rather than another section anchor. */
+.links a.cta {
+  padding: var(--s2) var(--s5);
+  border-radius: var(--r-full);
+  background: var(--accent-gold);
+  color: var(--text-on-accent);
+  font-weight: 600;
+}
+.links a.cta:hover {
+  box-shadow: var(--glow-gold);
+  color: var(--text-on-accent);
+}
+.links a.cta::after {
+  display: none;
+}
+
 .toggle {
   display: none;
   background: none;

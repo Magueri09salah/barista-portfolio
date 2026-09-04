@@ -83,6 +83,18 @@ export function Contact() {
                 </dd>
               </div>
               <div>
+                <dt>WhatsApp</dt>
+                <dd>
+                  <a
+                    href={`https://wa.me/${profile.whatsappHref}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {profile.whatsapp}
+                  </a>
+                </dd>
+              </div>
+              <div>
                 <dt>LinkedIn</dt>
                 <dd>
                   <a href={profile.linkedin} target="_blank" rel="noreferrer">
@@ -97,6 +109,14 @@ export function Contact() {
             </dl>
 
             <div className={s.socials}>
+              <a
+                href={`https://wa.me/${profile.whatsappHref}`}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`WhatsApp ${profile.whatsapp}`}
+              >
+                <Icon name="whatsapp" size={20} />
+              </a>
               <a href={profile.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
                 <Icon name="linkedin" size={20} />
               </a>

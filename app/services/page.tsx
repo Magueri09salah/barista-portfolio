@@ -5,6 +5,7 @@ import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { RequestForm } from "@/components/setup/RequestForm";
 import { Eyebrow, Spec } from "@/components/ui/Primitives";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { Reveal } from "@/components/ui/Reveal";
 import s from "./services.module.css";
 
@@ -100,6 +101,7 @@ export default function ServicesPage() {
         </section>
       </main>
       <Footer />
+      <WhatsAppButton />
     </>
   );
 }

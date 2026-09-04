@@ -297,6 +297,11 @@
   border-color: var(--accent-gold);
   box-shadow: 0 0 0 3px rgba(199, 144, 60, 0.16);
 }
+.hint {
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
 .pairs {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

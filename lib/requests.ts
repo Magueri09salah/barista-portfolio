@@ -71,6 +71,23 @@ function clean(value: unknown, max: number): string {
 
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
+/**
+ * Accepts a phone number from anywhere in the world.
+ *
+ * Deliberately counts digits rather than matching a pattern: numbers are
+ * written differently in every country — +212 6 17 80 58 66, (555) 010-9999,
+ * 07700 900123 — and a regex tight enough to look rigorous ends up rejecting
+ * real customers. E.164 caps a number at 15 digits; 7 is the shortest a
+ * national number gets. Everything in between is somebody's real phone.
+ *
+ * Formatting characters are ignored, so the visitor can type it however they
+ * like and it is stored exactly as they wrote it.
+ */
+export function isValidPhone(value: string): boolean {
+  const digits = value.replace(/\D/g, "");
+  return digits.length >= 7 && digits.length <= 15;
+}
+
 export type ParseResult =
   | { ok: true; value: Omit<SetupRequest, "id" | "createdAt" | "status" | "unread" | "adminNotes"> }
   | { ok: false; errors: string[] };
@@ -96,7 +113,13 @@ export function parseSubmission(body: unknown): ParseResult {
 
   if (!name) errors.push("A name is required.");
   if (!EMAIL.test(email)) errors.push("A valid email address is required.");
-  if (!phone) errors.push("A phone number is required.");
+  if (!isValidPhone(phone)) {
+    errors.push(
+      phone
+        ? "That phone number does not look complete. Include the country code."
+        : "A phone number is required.",
+    );
+  }
 
   /* Service ids — anything not in the catalogue is dropped rather than stored,
      and duplicates are collapsed. */

@@ -1,0 +1,77 @@
+/* ============================================================
+   Floating WhatsApp button
+   Uses WhatsApp's own green rather than a site token — a
+   recognised mark works because it looks like itself.
+   ============================================================ */
+
+.fab {
+  position: fixed;
+  right: var(--s7);
+  bottom: var(--s7);
+  z-index: 950;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  height: 56px;
+  padding-inline: 15px;
+
+  border-radius: var(--r-full);
+  background: #25d366;
+  color: #fff;
+  box-shadow:
+    0 4px 12px rgba(32, 24, 19, 0.18),
+    0 12px 32px -8px rgba(37, 211, 102, 0.5);
+
+  transition:
+    gap var(--d-base) var(--ease),
+    padding var(--d-base) var(--ease),
+    transform var(--d-base) var(--ease),
+    box-shadow var(--d-base) var(--ease);
+}
+.fab:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 16px rgba(32, 24, 19, 0.22),
+    0 16px 40px -8px rgba(37, 211, 102, 0.6);
+}
+
+/* Label slides open on hover and focus. Width, not display, so it animates. */
+.label {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: max-width var(--d-base) var(--ease);
+}
+.fab:hover .label,
+.fab:focus-visible .label {
+  max-width: 120px;
+}
+.fab:hover,
+.fab:focus-visible {
+  gap: var(--s3);
+  padding-inline: var(--s5) var(--s6);
+}
+
+@media (max-width: 640px) {
+  .fab {
+    right: var(--s5);
+    bottom: var(--s5);
+    height: 52px;
+    padding-inline: 13px;
+  }
+  /* No hover on touch, so the label would never open — keep it circular. */
+  .label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab,
+  .label {
+    transition: none;
+  }
+}

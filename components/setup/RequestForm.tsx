@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { budgets, categories, timelines, totalServiceCount } from "@/lib/catalogue";
 import { profile } from "@/lib/content";
+import { isValidPhone } from "@/lib/requests";
 import { Button, Icon, Spec } from "@/components/ui/Primitives";
 import s from "./request-form.module.css";
 
@@ -80,7 +81,11 @@ export function RequestForm() {
     if (selectedCount === 0) problems.push("Choose at least one service before sending.");
     if (!fields.name.trim()) problems.push("Add your name.");
     if (!EMAIL.test(fields.email.trim())) problems.push("Add an email address I can reply to.");
-    if (!fields.phone.trim()) problems.push("Add a phone number — WhatsApp is easiest.");
+    if (!fields.phone.trim()) {
+      problems.push("Add a phone number — WhatsApp is easiest.");
+    } else if (!isValidPhone(fields.phone)) {
+      problems.push("That phone number does not look complete. Include the country code.");
+    }
 
     if (problems.length > 0) {
       setErrors(problems);
@@ -320,11 +325,16 @@ export function RequestForm() {
                 <input
                   id="f-phone"
                   type="tel"
+                  inputMode="tel"
                   autoComplete="tel"
                   value={fields.phone}
                   onChange={(event) => update("phone", event.target.value)}
-                  placeholder="+212 6…"
+                  placeholder="+212 617 805 866"
+                  aria-describedby="f-phone-hint"
                 />
+                <p id="f-phone-hint" className={s.hint}>
+                  Any country. Include the country code so I can call you back.
+                </p>
               </div>
             </div>
 

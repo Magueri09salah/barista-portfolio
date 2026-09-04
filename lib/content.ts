@@ -19,6 +19,10 @@ export const profile = {
   email: "qasbilimohamed95@outlook.fr",
   phone: "+212 675 398 987",
   phoneHref: "+212675398987",
+  /** WhatsApp business line — the number people actually reach him on. */
+  whatsapp: "+212 617 805 866",
+  /** wa.me wants digits only, no plus, no spaces. */
+  whatsappHref: "212617805866",
   linkedin: "https://linkedin.com/in/qasbili-mohamed",
   linkedinLabel: "linkedin.com/in/qasbili-mohamed",
   availability: "Open to opportunities",

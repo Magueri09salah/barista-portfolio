@@ -1,10 +1,10 @@
-import { methods } from "@/lib/content";
-import { photo } from "@/lib/photos";
+import type { SiteContent } from "@/lib/site-content";
+import { pick, type PhotoMap } from "@/lib/photos";
 import { Badge, Photo, SectionHead, Spec } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
-export function Craft() {
+export function Craft({ methods, photos }: { methods: SiteContent["methods"]; photos: PhotoMap }) {
   return (
     <section className="section" id="craft">
       <div className="shell">
@@ -24,7 +24,7 @@ export function Craft() {
                 <Photo
                   tone={method.tone}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  {...photo(method.code)}
+                  {...pick(photos, method.code)}
                 />
                 <span className={s.drinkCode}>{method.code}</span>
                 <span className={s.drinkDiff}>

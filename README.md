@@ -21,6 +21,8 @@ npm run build
 | `/services` | The setup service, and the request form |
 | `/admin` | Back office inbox (password) |
 | `/admin/requests/[id]` | One request, with status and private notes |
+| `/admin/content` | Edit every section of the public site |
+| `/admin/images` | Replace any photograph on the site |
 
 ---
 
@@ -36,7 +38,8 @@ kind of detail that ends a conversation badly. Fewer real credentials, presented
 confidently, is the stronger position.
 
 If real ones arrive — an SCA certificate, a competition result, a reference from a
-manager willing to be named — add them to `lib/content.ts` and they will render in the
+manager willing to be named — add them at `/admin/content`, or to `lib/content.ts`
+if they should be part of the shipped defaults. Either way they render in the
 existing layouts.
 
 Figures currently used, and where they come from:
@@ -122,11 +125,16 @@ components/
     Counter.tsx         count-up statistics
     ui.module.css
 lib/
-  content.ts          all copy and data, typed — single source of truth
+  content.ts          the default copy, typed — see "Editing the site" below
 ```
 
 Sections are server components; only those needing browser APIs (`Nav`, `Hero`,
 `Journey`, `Faq`, `Contact`) are client components.
+
+Every section takes its copy as props. The page loads the content once and hands
+it down, rather than each section fetching for itself — five of them are client
+components and could not fetch anyway, and one load per page keeps the whole
+render on a single cached read.
 
 ---
 
@@ -141,10 +149,15 @@ prisma/
   migrations/         generated SQL, committed — the schema's history
 prisma7.config.ts     where Prisma reads the connection string
 lib/
+  content.ts          default site copy — the shipped text, under version control
+  site-content.ts     merges stored edits over those defaults (server only)
+  content-schema.ts   what the content editor renders for each section
+  photos.ts           the shipped photo slots, keyed by content value
+  images.ts           uploaded photographs, stored in Postgres (server only)
   catalogue.ts        the 5 phases and 23 services — single source of truth
   requests.ts         request shape, server-side validation, derived views
   prisma.ts           the Prisma client singleton (server only)
-  store.ts            every database query in the app (server only)
+  store.ts            every setup-request query (server only)
   generated/prisma/   generated client — gitignored, rebuilt by db:generate
   auth.ts             password check and signed session cookie
 middleware.ts         gates /admin and /api/admin
@@ -152,13 +165,13 @@ app/
   services/           the public page + form
   admin/
     login/            password screen
-    (dash)/           inbox and request detail, behind the shared chrome
+    (dash)/           inbox, request detail and content editor, behind the chrome
   api/
     requests/         POST — the public endpoint the form submits to
     admin/            login, and PATCH/DELETE on a single request
 components/
   setup/RequestForm   7-step wizard, client component
-  admin/              login form, status controls, sign out
+  admin/              login form, status controls, content editor, sign out
 ```
 
 ### The catalogue is the contract
@@ -202,10 +215,18 @@ plain Postgres with one endpoint, set `DATABASE_URL` alone.
 
 | Command | What it does |
 |---|---|
-| `npm run db:migrate` | Create and apply a migration after editing the schema |
-| `npm run db:deploy` | Apply existing migrations — this is the one to run on the server |
+| `npm run db:migrate` | Create a migration after editing the schema — **development only** |
+| `npm run db:deploy` | Apply existing migrations — the only one to run against live data |
 | `npm run db:generate` | Regenerate the client (also runs on `npm install`) |
 | `npm run db:studio` | Browse and edit the data in a GUI |
+
+> **Never run `db:migrate` against the database holding real leads.**
+> `prisma migrate dev` is a development command: when it finds drift between the
+> schema and the migration history it resets the database, and the prompt is
+> easy to miss in scrolled output. Point it at a Neon *development branch*, and
+> use `db:deploy` — which only applies migrations that already exist — against
+> anything with data in it. Neon keeps point-in-time history, so a branch can be
+> restored, but only within its retention window.
 
 **`lib/store.ts` is the only module that touches the database.** Everything above
 it works in the application's own `SetupRequest` type from `lib/requests.ts`, and
@@ -224,6 +245,69 @@ worth knowing: a fresh clone needs no `.env` to install, and plain `node` cannot
 import that client, because its internal imports are extensionless and only a
 bundler resolves them. Any standalone script that needs the database should use
 `pg` and raw SQL rather than Prisma Client.
+
+### Editing the site from the back office
+
+`/admin/content` edits every word on the public site — thirteen sections, from
+the profile and navigation through to the FAQ. Changes go live on save.
+
+The mechanism is a layered read, and it is worth understanding before adding to
+it:
+
+- **`lib/content.ts` is still the defaults.** It is what the site says out of
+  the box, and it stays in the repo under version control.
+- **The database stores only what has been changed** — a single JSON document,
+  one row, holding just the edited sections.
+- **`getSiteContent()` merges the two.** An empty table renders the site exactly
+  as shipped; "Restore original" is a delete, not a re-seed; and a field added
+  to the defaults appears immediately without a migration.
+
+Arrays are replaced wholesale rather than merged element-by-element — the editor
+sends the complete list every time, because merging by index would make deleting
+the last item of a list impossible.
+
+**`lib/content-schema.ts` decides what the editor shows.** Thirteen shapes would
+otherwise mean thirteen bespoke forms, so each section is *described* there and
+one generic editor renders all of them. The trade is that **a field added to
+`lib/content.ts` must also be described in the schema**, or it will not be
+editable — it will still render, using its default.
+
+Reads are cached under the `site-content` tag, so the public pages stay static
+and are regenerated when a save revalidates that tag. If the database is
+unreachable the site falls back to the shipped defaults rather than erroring: a
+portfolio showing slightly stale copy beats one returning a 500 because Neon was
+asleep.
+
+Two content fields double as photo keys — a milestone's date `range` and a
+gallery tile's `title`. The editor flags both. Change one without updating the
+matching image slot and that photo falls back to its gradient placeholder.
+
+### Replacing photographs
+
+`/admin/images` lists all 29 photo slots grouped by where they appear. Upload
+one to replace it; remove the upload and the file shipped in `public/images`
+comes back. Alt text is editable on its own, without re-uploading.
+
+Images are stored **in Postgres, as bytes**. That is an unusual choice, made
+because it adds no third-party service. Two things keep it viable:
+
+- **Uploads are capped at 2 MB** (`MAX_UPLOAD_BYTES` in `lib/images.ts`) and the
+  admin screen shows total usage, so Neon's 0.5 GB free tier is not something
+  you can fill by accident. Resize camera files before uploading.
+- **The serving URL carries a content hash** (`/api/images/hero?v=<hash>`) and
+  that response is `immutable`, so the bytes at a URL can never change —
+  replacing an image produces a new URL. Repeat views are answered by the CDN
+  and the browser, so the database is read roughly once per edge node per image
+  rather than once per page view. A bare URL without the hash stays
+  revalidatable, so it can never pin a stale photo in a cache.
+
+The blob column is never selected when listing — only when the bytes are
+actually being served. A `findMany` that read it would pull every photograph
+into memory.
+
+If this outgrows the free tier, the swap is contained: `lib/images.ts` is the
+only module that touches the bytes, and `getPhotoMap()` is the only thing the
+pages call.
 
 ### Access
 

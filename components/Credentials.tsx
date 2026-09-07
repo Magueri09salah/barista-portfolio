@@ -1,9 +1,9 @@
-import { credentials } from "@/lib/content";
+import type { SiteContent } from "@/lib/site-content";
 import { Icon, SectionHead } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
-export function Credentials() {
+export function Credentials({ credentials }: { credentials: SiteContent["credentials"] }) {
   return (
     <section className="section bgInverse" id="credentials">
       <div className="shell">

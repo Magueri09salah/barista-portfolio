@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { profile } from "@/lib/content";
-import { photo } from "@/lib/photos";
+import type { SiteContent } from "@/lib/site-content";
+import { pick, type PhotoMap } from "@/lib/photos";
 import { ButtonLink, Eyebrow, Icon, Photo, Spec } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./Hero.module.css";
@@ -42,7 +42,7 @@ function ShotTimer() {
   return <>{t.toFixed(1)}</>;
 }
 
-export function Hero() {
+export function Hero({ profile, photos }: { profile: SiteContent["profile"]; photos: PhotoMap }) {
   return (
     <section className={s.hero} id="top">
       <div className={s.bg} aria-hidden="true" />
@@ -118,7 +118,7 @@ export function Hero() {
             label="Specialty bar · in service"
             priority
             sizes="(max-width: 900px) 100vw, 38vw"
-            {...photo("hero")}
+            {...pick(photos, "hero")}
           />
           <div className={s.steam} aria-hidden="true">
             <span />

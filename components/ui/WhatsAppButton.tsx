@@ -1,4 +1,4 @@
-import { profile } from "@/lib/content";
+import type { SiteContent } from "@/lib/site-content";
 import { Icon } from "./Primitives";
 import s from "./whatsapp.module.css";
 
@@ -12,7 +12,7 @@ import s from "./whatsapp.module.css";
  * The label is hidden until hover on desktop and always hidden on mobile, so
  * the button stays out of the way of the content it floats over.
  */
-export function WhatsAppButton() {
+export function WhatsAppButton({ profile }: { profile: SiteContent["profile"] }) {
   return (
     <a
       className={s.fab}

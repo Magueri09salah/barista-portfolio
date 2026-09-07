@@ -1,9 +1,9 @@
-import { principles } from "@/lib/content";
+import type { SiteContent } from "@/lib/site-content";
 import { Eyebrow, Spec } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
-export function Philosophy() {
+export function Philosophy({ principles }: { principles: SiteContent["principles"] }) {
   return (
     <section className="section bgSubtle" id="philosophy">
       <div className="shell">

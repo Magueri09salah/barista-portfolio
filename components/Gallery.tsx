@@ -1,10 +1,10 @@
-import { gallery } from "@/lib/content";
-import { photo } from "@/lib/photos";
+import type { SiteContent } from "@/lib/site-content";
+import { pick, type PhotoMap } from "@/lib/photos";
 import { Photo, SectionHead } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
-export function Gallery() {
+export function Gallery({ gallery, photos }: { gallery: SiteContent["gallery"]; photos: PhotoMap }) {
   return (
     <section className="section" id="gallery">
       <div className="shell">
@@ -24,7 +24,7 @@ export function Gallery() {
                 <Photo
                   tone={tile.tone}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  {...photo(tile.title)}
+                  {...pick(photos, tile.title)}
                 />
                 <figcaption className={s.tileCap}>
                   <b className="bodySm">{tile.title}</b>

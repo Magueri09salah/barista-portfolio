@@ -1,13 +1,21 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { enquiryTypes, profile } from "@/lib/content";
-import { photo } from "@/lib/photos";
+import type { SiteContent } from "@/lib/site-content";
+import { pick, type PhotoMap } from "@/lib/photos";
 import { Badge, Button, Icon, Photo, SectionHead } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
-export function Contact() {
+export function Contact({
+  profile,
+  enquiryTypes,
+  photos,
+}: {
+  profile: SiteContent["profile"];
+  enquiryTypes: SiteContent["enquiryTypes"];
+  photos: PhotoMap;
+}) {
   const [note, setNote] = useState("");
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -51,7 +59,7 @@ export function Contact() {
                 tone="gold"
                 label="Bar, end of service"
                 sizes="(max-width: 900px) 100vw, 45vw"
-                {...photo("contact")}
+                {...pick(photos, "contact")}
               />
             </Reveal>
 

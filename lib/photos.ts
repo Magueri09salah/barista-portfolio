@@ -20,10 +20,13 @@
 
 export type PhotoSlot = { src: string; alt: string };
 
+/** Every slot, keyed as below. Uploads in the back office override entries here. */
+export type PhotoMap = Record<string, PhotoSlot>;
+
 const slot = (src: string, alt: string): PhotoSlot => ({ src, alt });
 const img = (file: string) => `/images/${file}`;
 
-export const photos: Record<string, PhotoSlot> = {
+export const photos: PhotoMap = {
   /* ---------------------------------------------------------- Headline
      Deliberately no identifiable faces: an anonymous bar reads as
      atmosphere, whereas a stranger's portrait would read as "this is me".
@@ -66,10 +69,14 @@ export const photos: Record<string, PhotoSlot> = {
 };
 
 /**
- * Returns the slot only once a real file has been set, so components fall
- * back to the gradient placeholder for any slot left blank.
+ * Looks a slot up in a resolved photo map.
+ *
+ * The map is passed in rather than imported so that a page can hand down one
+ * that already has the back office's uploads merged over these defaults — see
+ * lib/images.ts. Returns undefined for a blank slot, which makes the component
+ * fall back to its gradient placeholder.
  */
-export function photo(key: string): PhotoSlot | undefined {
+export function pick(photos: PhotoMap, key: string): PhotoSlot | undefined {
   const found = photos[key];
   return found && found.src ? found : undefined;
 }

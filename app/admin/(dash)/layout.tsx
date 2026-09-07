@@ -24,12 +24,21 @@ export default async function DashLayout({ children }: { children: React.ReactNo
             {unread > 0 ? <em className={s.barBadge}>{unread}</em> : null}
           </Link>
 
-          <div className={s.barActions}>
+          <nav className={s.barActions} aria-label="Back office">
+            <Link className={s.barLink} href="/admin">
+              Requests
+            </Link>
+            <Link className={s.barLink} href="/admin/content">
+              Content
+            </Link>
+            <Link className={s.barLink} href="/admin/images">
+              Images
+            </Link>
             <Link className={s.barLink} href="/services">
-              View the form
+              View site
             </Link>
             <SignOutButton />
-          </div>
+          </nav>
         </div>
       </header>
 

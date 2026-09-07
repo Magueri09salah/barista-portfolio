@@ -18,6 +18,53 @@ datasource db {
   provider = "postgresql"
 }
 
+/// An uploaded photograph, stored as bytes.
+///
+/// Keeping image binaries in Postgres is a deliberate trade, made because it
+/// adds no third-party service. Two things keep it honest:
+///
+///   - uploads are capped (see MAX_UPLOAD_BYTES in lib/images.ts), so the
+///     0.5 GB free tier is not something you can walk into by accident
+///   - `hash` goes in the URL and the serving route sets an immutable
+///     cache header, so the CDN answers repeat views and the database is
+///     read roughly once per edge node per image
+///
+/// `bytes` is never selected when listing — see lib/images.ts.
+model Image {
+  /// The photo slot it fills, e.g. "hero" or "ESP". Keys come from lib/photos.ts.
+  slot String @id
+
+  alt      String @default("")
+  mimeType String
+  bytes    Bytes
+  /// Byte length, kept so the admin can show usage without reading the blob.
+  size     Int
+  /// Content hash — cache-busts the URL when the image is replaced.
+  hash     String
+
+  updatedAt DateTime @updatedAt
+
+  @@map("images")
+}
+
+/// Editable site copy, as one JSON document.
+///
+/// There is exactly one row, id "singleton". It holds only what has been
+/// changed in the back office; lib/content.ts remains the defaults, and
+/// getSiteContent() merges this over them. So an empty table renders the site
+/// exactly as shipped, and "reset to default" is a delete.
+///
+/// One document rather than a table per section because the whole thing is
+/// read together on every page and written by one person occasionally — the
+/// join-and-order machinery of a normalised schema would buy nothing here.
+model SiteContent {
+  id        String   @id @default("singleton")
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt
+
+  @@map("site_content")
+}
+
 // Lowercase to match the string union in lib/requests.ts exactly, so a status
 // read from the database needs no translation on the way out.
 enum RequestStatus {

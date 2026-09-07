@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { services } from "@/lib/content";
+import type { SiteContent } from "@/lib/site-content";
 import { totalServiceCount } from "@/lib/catalogue";
 import { Icon, SectionHead } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
-export function Services() {
+export function Services({ services }: { services: SiteContent["services"] }) {
   return (
     <section className="section bgSand" id="services">
       <div className="shell">

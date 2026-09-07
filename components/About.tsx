@@ -1,11 +1,20 @@
-import { aboutClosing, aboutParagraphs, aboutQuote, stats } from "@/lib/content";
+import type { SiteContent } from "@/lib/site-content";
 import { Eyebrow, Photo } from "./ui/Primitives";
 import { Counter } from "./ui/Counter";
-import { photo } from "@/lib/photos";
+import { pick, type PhotoMap } from "@/lib/photos";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
-export function About() {
+export function About({
+  about,
+  stats,
+  photos,
+}: {
+  about: SiteContent["about"];
+  stats: SiteContent["stats"];
+  photos: PhotoMap;
+}) {
+  const { paragraphs: aboutParagraphs, closing: aboutClosing, quote: aboutQuote } = about;
   return (
     <section className="section" id="about">
       <div className="shell">
@@ -15,7 +24,7 @@ export function About() {
               tone="light"
               label="The craft, up close"
               sizes="(max-width: 1024px) 100vw, 40vw"
-              {...photo("about")}
+              {...pick(photos, "about")}
             />
           </Reveal>
 

@@ -2,11 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { navLinks, profile } from "@/lib/content";
+import type { SiteContent } from "@/lib/site-content";
 import { Icon } from "./ui/Primitives";
 import s from "./Nav.module.css";
 
-export function Nav() {
+export function Nav({
+  profile,
+  navLinks,
+}: {
+  profile: SiteContent["profile"];
+  navLinks: SiteContent["navLinks"];
+}) {
   const [stuck, setStuck] = useState(false);
   const [open, setOpen] = useState(false);
   const [progress, setProgress] = useState(0);

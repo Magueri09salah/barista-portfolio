@@ -1,9 +1,9 @@
-import { skillGroups } from "@/lib/content";
+import type { SiteContent } from "@/lib/site-content";
 import { Badge, SectionHead } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
-export function Skills() {
+export function Skills({ skillGroups }: { skillGroups: SiteContent["skillGroups"] }) {
   return (
     <section className="section bgSubtle" id="skills">
       <div className="shell">

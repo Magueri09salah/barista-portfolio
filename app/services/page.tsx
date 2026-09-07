@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { categories, totalServiceCount } from "@/lib/catalogue";
-import { profile } from "@/lib/content";
+import { getSiteContent } from "@/lib/site-content";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { RequestForm } from "@/components/setup/RequestForm";
@@ -21,10 +21,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const content = await getSiteContent();
+  const { profile } = content;
+
   return (
     <>
-      <Nav />
+      <Nav profile={profile} navLinks={content.navLinks} />
       <main id="main">
         {/* ------------------------------------------------------- Opening */}
         <section className={`section ${s.intro}`}>
@@ -96,12 +99,12 @@ export default function ServicesPage() {
               </p>
             </Reveal>
 
-            <RequestForm />
+            <RequestForm profile={profile} />
           </div>
         </section>
       </main>
-      <Footer />
-      <WhatsAppButton />
+      <Footer profile={profile} />
+      <WhatsAppButton profile={profile} />
     </>
   );
 }

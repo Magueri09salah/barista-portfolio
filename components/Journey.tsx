@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { milestones } from "@/lib/content";
-import { photo } from "@/lib/photos";
+import type { SiteContent } from "@/lib/site-content";
+import { pick, type PhotoMap } from "@/lib/photos";
 import { Photo, SectionHead, Spec } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
-export function Journey() {
+export function Journey({ milestones, photos }: { milestones: SiteContent["milestones"]; photos: PhotoMap }) {
   const railRef = useRef<HTMLDivElement | null>(null);
   const [thumb, setThumb] = useState({ width: 20, left: 0 });
   const [activeIndex, setActiveIndex] = useState(0);
@@ -77,7 +77,7 @@ export function Journey() {
                 tone={milestone.tone}
                 label={milestone.caption}
                 sizes="(max-width: 640px) 78vw, 420px"
-                {...photo(milestone.range)}
+                {...pick(photos, milestone.range)}
               />
             </div>
             <Spec

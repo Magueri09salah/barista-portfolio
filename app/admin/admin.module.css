@@ -557,6 +557,409 @@
   color: var(--coffee-700);
 }
 
+/* ======================================================== CONTENT EDITOR */
+
+.contentIntro {
+  margin-top: var(--s5);
+  max-width: 70ch;
+}
+
+/* ---------------------------------------------------------- Section index */
+.sectionList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  margin-top: var(--s8);
+}
+.sectionRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--s5);
+  padding: var(--s5) var(--s6);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  transition:
+    border-color var(--d-fast) var(--ease),
+    box-shadow var(--d-fast) var(--ease),
+    transform var(--d-fast) var(--ease);
+}
+.sectionRow:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--elev-2);
+  transform: translateY(-1px);
+}
+.sectionMain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  min-width: 0;
+}
+.sectionName {
+  font-size: var(--t-base);
+  font-weight: 600;
+}
+.sectionBlurb {
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+}
+.sectionWhere {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.sectionDefault {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 5px var(--s3);
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------- Editor head */
+.editorHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s6);
+  flex-wrap: wrap;
+  margin-bottom: var(--s8);
+}
+.editorBlurb {
+  margin-top: var(--s3);
+  max-width: 60ch;
+}
+
+/* --------------------------------------------------------- Field layout */
+.editorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--s5);
+  padding: var(--s6);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+}
+.editorField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  min-width: 0;
+}
+.editorWide {
+  grid-column: 1 / -1;
+}
+.editorField label {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.editorField input,
+.editorField select,
+.editorField textarea,
+.subRow input {
+  width: 100%;
+  padding: var(--s3) var(--s4);
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  font-size: var(--t-sm);
+  color: var(--text-primary);
+}
+.editorField input:focus,
+.editorField select:focus,
+.editorField textarea:focus,
+.subRow input:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(199, 144, 60, 0.16);
+}
+.editorArea {
+  min-height: 130px;
+  resize: vertical;
+  line-height: 1.7;
+}
+.editorHelp {
+  font-size: var(--t-cap);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.checkRow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  font-size: var(--t-sm);
+  cursor: pointer;
+}
+.checkRow input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-gold);
+}
+
+/* ------------------------------------------------------- Nested lists */
+.subList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+.subRow {
+  display: flex;
+  gap: var(--s2);
+  align-items: center;
+}
+.subAdd {
+  align-self: flex-start;
+  margin-top: var(--s2);
+  padding: var(--s2) var(--s4);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--r-full);
+  background: transparent;
+  font-size: var(--t-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.subAdd:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold-deep);
+}
+.rowDrop {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+.rowDrop:hover {
+  border-color: var(--coffee-600);
+  color: var(--coffee-700);
+}
+
+/* --------------------------------------------------------- Item cards */
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+}
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+.itemHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+}
+.itemIndex {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--accent-gold-deep);
+}
+.itemTitle {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: var(--t-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.itemTools {
+  display: flex;
+  gap: var(--s2);
+}
+.itemTools button {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  line-height: 1;
+}
+.itemTools button:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+.itemTools button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ----------------------------------------------------------- Save bar */
+.saveBar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s5);
+  flex-wrap: wrap;
+  margin-top: var(--s8);
+  padding: var(--s5) var(--s6);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-3);
+}
+.saveState {
+  font-size: var(--t-sm);
+  color: var(--text-muted);
+  min-height: 1.4em;
+}
+.saveActions {
+  display: flex;
+  align-items: center;
+  gap: var(--s5);
+}
+
+/* ======================================================== IMAGE MANAGER */
+
+.slotGroup {
+  margin-top: var(--s9);
+}
+.slotGroupTitle {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: var(--s3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.slotGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--s5);
+  margin-top: var(--s6);
+}
+.slot {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.slotThumb {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  background: var(--bg-sand);
+}
+.slotThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.slotBadge {
+  position: absolute;
+  top: var(--s3);
+  left: var(--s3);
+  padding: 4px var(--s3);
+  border-radius: var(--r-full);
+  background: var(--accent-gold);
+  color: var(--text-on-accent);
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.slotBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s5);
+}
+.slotLabel {
+  font-size: var(--t-sm);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.slotKey {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  word-break: break-word;
+}
+.slotAlt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  margin-top: var(--s2);
+}
+.slotAlt span {
+  font-family: var(--font-spec), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.slotAlt input {
+  padding: var(--s3) var(--s4);
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  font-size: var(--t-sm);
+}
+.slotAlt input:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+}
+.slotFile {
+  font-size: var(--t-cap);
+  color: var(--text-muted);
+}
+.slotFile::file-selector-button {
+  margin-right: var(--s3);
+  padding: 7px var(--s4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-full);
+  background: transparent;
+  font-size: var(--t-cap);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.slotFile::file-selector-button:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold-deep);
+}
+.slotError {
+  font-size: var(--t-cap);
+  line-height: 1.5;
+  color: var(--coffee-700);
+}
+.slotNote {
+  font-size: var(--t-cap);
+  color: var(--status-success);
+}
+.slotActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  margin-top: var(--s2);
+}
+
 /* ---------------------------------------------------------------- Login */
 .loginPage {
   min-height: 100vh;

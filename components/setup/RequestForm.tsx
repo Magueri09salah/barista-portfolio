@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { budgets, categories, timelines, totalServiceCount } from "@/lib/catalogue";
-import { profile } from "@/lib/content";
+import type { SiteContent } from "@/lib/site-content";
 import { isValidPhone } from "@/lib/requests";
 import { Button, Icon, Spec } from "@/components/ui/Primitives";
 import s from "./request-form.module.css";
@@ -26,7 +26,7 @@ const emptyFields: Fields = { name: "", email: "", phone: "", city: "", message:
 
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
-export function RequestForm() {
+export function RequestForm({ profile }: { profile: SiteContent["profile"] }) {
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [notes, setNotes] = useState<Record<string, string>>({});

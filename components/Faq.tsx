@@ -1,12 +1,12 @@
 "use client";
 
 import { useId, useState } from "react";
-import { faqs } from "@/lib/content";
+import type { SiteContent } from "@/lib/site-content";
 import { Icon, SectionHead } from "./ui/Primitives";
 import { Reveal } from "./ui/Reveal";
 import s from "./sections.module.css";
 
-export function Faq() {
+export function Faq({ faqs }: { faqs: SiteContent["faqs"] }) {
   const [open, setOpen] = useState<number | null>(null);
   const baseId = useId();
 

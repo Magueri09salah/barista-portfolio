@@ -1,37 +1,44 @@
-import { profile } from "@/lib/content";
+import type { SiteContent } from "@/lib/site-content";
 import { Spec } from "./ui/Primitives";
 import s from "./sections.module.css";
 
-const columns = [
-  {
-    title: "Portfolio",
-    links: [
-      { href: "#about", label: "About" },
-      { href: "#journey", label: "Journey" },
-      { href: "#craft", label: "Craft" },
-      { href: "#skills", label: "Skills" },
-    ],
-  },
-  {
-    title: "Detail",
-    links: [
-      { href: "#credentials", label: "Credentials" },
-      { href: "#gallery", label: "Gallery" },
-      { href: "#services", label: "What I do" },
-      { href: "#faq", label: "Questions" },
-    ],
-  },
-  {
-    title: "Reach me",
-    links: [
-      { href: `mailto:${profile.email}`, label: "Email" },
-      { href: `tel:${profile.phoneHref}`, label: profile.phone },
-      { href: profile.linkedin, label: "LinkedIn" },
-    ],
-  },
-];
+/* Built per render because the "Reach me" column is made of editable contact
+   details. Paths are rooted at "/" so the footer also works from /services. */
+function buildColumns(profile: SiteContent["profile"]) {
+  return [
+    {
+      title: "Portfolio",
+      links: [
+        { href: "/#about", label: "About" },
+        { href: "/#journey", label: "Journey" },
+        { href: "/#craft", label: "Craft" },
+        { href: "/#skills", label: "Skills" },
+      ],
+    },
+    {
+      title: "Detail",
+      links: [
+        { href: "/#credentials", label: "Credentials" },
+        { href: "/#gallery", label: "Gallery" },
+        { href: "/#services", label: "What I do" },
+        { href: "/#faq", label: "Questions" },
+      ],
+    },
+    {
+      title: "Reach me",
+      links: [
+        { href: `mailto:${profile.email}`, label: "Email" },
+        { href: `tel:${profile.phoneHref}`, label: profile.phone },
+        { href: `https://wa.me/${profile.whatsappHref}`, label: "WhatsApp" },
+        { href: profile.linkedin, label: "LinkedIn" },
+      ],
+    },
+  ];
+}
 
-export function Footer() {
+export function Footer({ profile }: { profile: SiteContent["profile"] }) {
+  const columns = buildColumns(profile);
+
   return (
     <footer className={s.footer}>
       <div className="shell">

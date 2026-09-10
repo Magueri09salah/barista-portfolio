@@ -26,8 +26,8 @@ import { prisma } from "./prisma";
 
 export const IMAGES_TAG = "site-images";
 
-/** 2 MB. Large enough for a good web photograph, small enough to stay sane. */
-export const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
+/** 5 MB. Large enough for a good web photograph, small enough to stay sane. */
+export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 
 export const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"] as const;
 

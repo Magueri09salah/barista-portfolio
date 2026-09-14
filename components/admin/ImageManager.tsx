@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { MAX_SOURCE_BYTES, formatBytes, prepareImage } from "@/lib/image-resize";
 import s from "@/app/admin/admin.module.css";
 
 export type SlotView = {
@@ -16,13 +17,7 @@ export type SlotView = {
   size: number;
 };
 
-const MAX_MB = 2;
-
-function formatSize(bytes: number): string {
-  if (bytes <= 0) return "";
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-}
+const MAX_SOURCE_MB = MAX_SOURCE_BYTES / 1024 / 1024;
 
 function SlotCard({ view }: { view: SlotView }) {
   const router = useRouter();
@@ -32,12 +27,13 @@ function SlotCard({ view }: { view: SlotView }) {
   const [preview, setPreview] = useState<string | null>(null);
   const [chosen, setChosen] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
+  const [preparing, setPreparing] = useState(false);
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
 
   const dirty = chosen !== null || alt !== view.alt;
 
-  function choose(file: File | null) {
+  async function choose(file: File | null) {
     setError("");
     setNote("");
 
@@ -47,16 +43,29 @@ function SlotCard({ view }: { view: SlotView }) {
       return;
     }
 
-    /* Checked here as well as on the server, so an oversized file is refused
-       before it is uploaded rather than after. */
-    if (file.size > MAX_MB * 1024 * 1024) {
-      setError(`That image is ${(file.size / 1024 / 1024).toFixed(1)} MB. The limit is ${MAX_MB} MB.`);
+    /* Refused here rather than after a long upload that the server would
+       reject anyway. */
+    if (file.size > MAX_SOURCE_BYTES) {
+      setError(`That image is ${formatBytes(file.size)}. The limit is ${MAX_SOURCE_MB} MB.`);
       if (fileRef.current) fileRef.current.value = "";
       return;
     }
 
-    setChosen(file);
-    setPreview(URL.createObjectURL(file));
+    /* Shrink before uploading: a camera file is far larger than anything this
+       site displays, and Vercel rejects a request body over 4.5 MB before it
+       reaches the server. An already-optimised image comes back untouched. */
+    setPreparing(true);
+    const { file: ready, changed } = await prepareImage(file);
+    setPreparing(false);
+
+    setChosen(ready);
+    setPreview(URL.createObjectURL(ready));
+
+    if (changed) {
+      setNote(
+        `Resized to ${changed.width}×${changed.height} — ${formatBytes(changed.fromBytes)} down to ${formatBytes(changed.toBytes)}.`,
+      );
+    }
   }
 
   async function save() {
@@ -80,7 +89,7 @@ function SlotCard({ view }: { view: SlotView }) {
     setChosen(null);
     setPreview(null);
     if (fileRef.current) fileRef.current.value = "";
-    setNote("Saved.");
+    setNote(`Saved — ${formatBytes(chosen?.size ?? 0)} stored.`);
     router.refresh();
   }
 
@@ -114,7 +123,7 @@ function SlotCard({ view }: { view: SlotView }) {
         <p className={s.slotLabel}>{view.label}</p>
         <p className={s.slotKey}>
           {view.slot}
-          {view.uploaded && view.size ? ` · ${formatSize(view.size)}` : ""}
+          {view.uploaded && view.size ? ` · ${formatBytes(view.size)}` : ""}
         </p>
 
         <label className={s.slotAlt}>
@@ -134,7 +143,7 @@ function SlotCard({ view }: { view: SlotView }) {
           className={s.slotFile}
           type="file"
           accept="image/jpeg,image/png,image/webp,image/avif"
-          onChange={(e) => choose(e.target.files?.[0] ?? null)}
+          onChange={(e) => void choose(e.target.files?.[0] ?? null)}
           aria-label={`Choose a new image for ${view.label}`}
         />
 
@@ -142,8 +151,13 @@ function SlotCard({ view }: { view: SlotView }) {
         {!error && note ? <p className={s.slotNote}>{note}</p> : null}
 
         <div className={s.slotActions}>
-          <button type="button" className={s.save} onClick={save} disabled={busy || !dirty}>
-            {busy ? "Saving…" : dirty ? "Save" : "Saved"}
+          <button
+            type="button"
+            className={s.save}
+            onClick={save}
+            disabled={busy || preparing || !dirty}
+          >
+            {preparing ? "Resizing…" : busy ? "Saving…" : dirty ? "Save" : "Saved"}
           </button>
           {view.uploaded ? (
             <button type="button" className={s.delete} onClick={remove} disabled={busy}>

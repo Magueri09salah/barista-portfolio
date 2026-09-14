@@ -1,4 +1,5 @@
-import { imageUrl, listImageMeta, MAX_UPLOAD_BYTES } from "@/lib/images";
+import { imageUrl, listImageMeta } from "@/lib/images";
+import { MAX_DIMENSION, MAX_SOURCE_BYTES } from "@/lib/image-resize";
 import { photos as defaultPhotos } from "@/lib/photos";
 import { ImageManager, type SlotView } from "@/components/admin/ImageManager";
 import s from "../../admin.module.css";
@@ -57,8 +58,9 @@ export default async function ImagesPage() {
 
       <p className={`bodySm muted ${s.contentIntro}`}>
         Every photo slot on the site. Upload one to replace what is there; remove the upload and the
-        original comes back. Maximum {MAX_UPLOAD_BYTES / 1024 / 1024} MB each — resize large camera
-        files before uploading.
+        original comes back. Photos up to {MAX_SOURCE_BYTES / 1024 / 1024} MB are accepted and
+        resized in your browser before they are sent — straight off a phone or camera is fine, and
+        anything wider than {MAX_DIMENSION}px is scaled down to it.
         {uploaded.length > 0
           ? ` ${uploaded.length} replaced, using ${usedMb} MB of database storage.`
           : " Nothing replaced yet — all slots show the shipped photos."}

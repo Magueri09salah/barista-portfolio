@@ -291,9 +291,17 @@ comes back. Alt text is editable on its own, without re-uploading.
 Images are stored **in Postgres, as bytes**. That is an unusual choice, made
 because it adds no third-party service. Two things keep it viable:
 
-- **Uploads are capped at 2 MB** (`MAX_UPLOAD_BYTES` in `lib/images.ts`) and the
-  admin screen shows total usage, so Neon's 0.5 GB free tier is not something
-  you can fill by accident. Resize camera files before uploading.
+- **Photos are downscaled in the browser before they are uploaded**
+  (`lib/image-resize.ts`). You may pick a file up to 10 MB — straight off a
+  phone or camera — and anything wider than 2560px is scaled to it and
+  re-encoded as WebP, typically landing a few hundred KB. An image that is
+  already small and correctly sized is passed through untouched, so nothing is
+  re-encoded twice. `MAX_UPLOAD_BYTES` in `lib/images.ts` is a 10 MB
+  server-side backstop for a request that skipped the browser.
+
+  This is not only about storage. **Vercel rejects a request body over 4.5 MB
+  at the platform edge**, before any of this code runs — so without shrinking
+  first, a large photo could not be uploaded on the deployed site at all.
 - **The serving URL carries a content hash** (`/api/images/hero?v=<hash>`) and
   that response is `immutable`, so the bytes at a URL can never change —
   replacing an image produces a new URL. Repeat views are answered by the CDN

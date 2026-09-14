@@ -5,9 +5,10 @@
  * deliberate one: it adds no third-party service, which was the requirement.
  * Two things stop it being a bad one.
  *
- *   SIZE      uploads are capped at MAX_UPLOAD_BYTES and the admin screen
- *             shows total usage, so the free tier cannot be filled by
- *             accident. Twenty-nine photos at the cap is still ~58 MB.
+ *   SIZE      images are downscaled in the browser before upload and capped
+ *             server-side, and the admin screen shows total usage, so the free
+ *             tier cannot be filled by accident. A resized photo is typically
+ *             a few hundred KB, so all twenty-nine fit in well under 50 MB.
  *
  *   READS     the serving URL carries a content hash and the route sets an
  *             immutable cache header, so a CDN or browser never asks twice for
@@ -26,8 +27,18 @@ import { prisma } from "./prisma";
 
 export const IMAGES_TAG = "site-images";
 
-/** 5 MB. Large enough for a good web photograph, small enough to stay sane. */
-export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+/**
+ * Ceiling on what is actually stored.
+ *
+ * The back office downscales images in the browser before uploading (see
+ * lib/image-resize.ts), so a normal upload lands far under this — it is a
+ * backstop against a request that skipped the browser, not the limit a person
+ * meets. What may be picked from disk is MAX_SOURCE_BYTES, which is 10 MB.
+ *
+ * On Vercel the platform rejects any request body over 4.5 MB before this is
+ * consulted, which is the other reason uploads are shrunk client-side.
+ */
+export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
 export const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"] as const;
 
@@ -116,7 +127,7 @@ export async function putImage(
     const mb = (file.bytes.byteLength / 1024 / 1024).toFixed(1);
     return {
       ok: false,
-      error: `That image is ${mb} MB. The limit is ${MAX_UPLOAD_BYTES / 1024 / 1024} MB — resize it and try again.`,
+      error: `That image is ${mb} MB, over the ${MAX_UPLOAD_BYTES / 1024 / 1024} MB limit. Resize it and try again.`,
     };
   }
 

@@ -19,6 +19,13 @@ export type SlotView = {
 
 const MAX_SOURCE_MB = MAX_SOURCE_BYTES / 1024 / 1024;
 
+/** Said in plain words, for a response that carried no message of our own. */
+function failureFor(status: number): string {
+  if (status === 413) return "The upload was rejected as too large before it reached the site.";
+  if (status === 401) return "Your session expired. Sign in again.";
+  return `Could not save (error ${status}).`;
+}
+
 function SlotCard({ view }: { view: SlotView }) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -55,41 +62,60 @@ function SlotCard({ view }: { view: SlotView }) {
        site displays, and Vercel rejects a request body over 4.5 MB before it
        reaches the server. An already-optimised image comes back untouched. */
     setPreparing(true);
-    const { file: ready, changed } = await prepareImage(file);
+    const prepared = await prepareImage(file);
     setPreparing(false);
 
-    setChosen(ready);
-    setPreview(URL.createObjectURL(ready));
+    if (!prepared.ok) {
+      setError(prepared.error);
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
 
-    if (changed) {
+    setChosen(prepared.file);
+    setPreview(URL.createObjectURL(prepared.file));
+
+    if (prepared.changed) {
+      const { width, height, fromBytes, toBytes } = prepared.changed;
       setNote(
-        `Resized to ${changed.width}×${changed.height} — ${formatBytes(changed.fromBytes)} down to ${formatBytes(changed.toBytes)}.`,
+        `Resized to ${width}×${height} — ${formatBytes(fromBytes)} down to ${formatBytes(toBytes)}.`,
       );
     }
   }
 
   async function save() {
+    const sent = chosen;
     setBusy(true);
     setError("");
 
     const body = new FormData();
     body.set("slot", view.slot);
     body.set("alt", alt);
-    if (chosen) body.set("file", chosen);
+    if (sent) body.set("file", sent);
 
-    const response = await fetch("/api/admin/images", { method: "POST", body });
-    const payload = await response.json().catch(() => ({}));
+    let response: Response;
+    try {
+      response = await fetch("/api/admin/images", { method: "POST", body });
+    } catch {
+      setBusy(false);
+      setError("The upload did not reach the server. Check your connection and try again.");
+      return;
+    }
+
+    /* A rejection from the hosting platform arrives as its own error page
+       rather than our JSON, so parsing can fail on a perfectly real response.
+       Fall back to the status code instead of reporting nothing useful. */
+    const payload: { error?: string } = await response.json().catch(() => ({}));
     setBusy(false);
 
     if (!response.ok) {
-      setError(payload.error ?? "Could not save.");
+      setError(payload.error ?? failureFor(response.status));
       return;
     }
 
     setChosen(null);
     setPreview(null);
     if (fileRef.current) fileRef.current.value = "";
-    setNote(`Saved — ${formatBytes(chosen?.size ?? 0)} stored.`);
+    setNote(sent ? `Saved — ${formatBytes(sent.size)} stored.` : "Saved.");
     router.refresh();
   }
 

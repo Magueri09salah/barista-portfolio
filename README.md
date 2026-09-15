@@ -301,7 +301,20 @@ because it adds no third-party service. Two things keep it viable:
 
   This is not only about storage. **Vercel rejects a request body over 4.5 MB
   at the platform edge**, before any of this code runs — so without shrinking
-  first, a large photo could not be uploaded on the deployed site at all.
+  first, a large photo could not be uploaded on the deployed site at all. That
+  rejection arrives as the platform's own error page rather than our JSON, so
+  the back office cannot explain it; `MAX_SEND_BYTES` (3.5 MB) is therefore a
+  hard ceiling on what is put on the wire at all. If an image cannot be reduced
+  below it, the upload is refused in the browser with a reason.
+
+  Two things the encoder has to work around, both of which silently corrupted
+  uploads before they were handled: `canvas.toBlob` **returns PNG when asked
+  for a type it cannot write**, and a PNG of a 2560px photograph is several
+  megabytes — larger than the original it was meant to shrink — so WebP support
+  is probed on a 1x1 canvas first and JPEG used when it is absent. And
+  `createImageBitmap` needs `imageOrientation: "from-image"`, or a phone's
+  portrait photo decodes sideways and re-encoding drops the EXIF tag that would
+  have corrected it, making the rotation permanent.
 - **The serving URL carries a content hash** (`/api/images/hero?v=<hash>`) and
   that response is `immutable`, so the bytes at a URL can never change —
   replacing an image produces a new URL. Repeat views are answered by the CDN

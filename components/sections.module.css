@@ -89,8 +89,13 @@
     grid-template-columns: minmax(0, 1fr);
     gap: var(--s9);
   }
+  /* relative, not static. The photo inside is position:absolute and needs
+     this box as its containing block. Static looks fine until the reveal
+     animation ends: the wrapper's transform was standing in as the containing
+     block, and once it returns to `none` the photo escapes to the section and
+     stretches to its full height. */
   .aboutPortrait {
-    position: static;
+    position: relative;
     aspect-ratio: 4 / 3;
   }
   .stats {

@@ -12,7 +12,7 @@ export function Craft({ methods, photos }: { methods: SiteContent["methods"]; ph
           <SectionHead
             split
             eyebrow="Craft"
-            title="Seven methods I work in."
+            title="Five methods I work in."
             description="Ratios and temperatures are the standard specialty targets I dial to. Everything else — grind, dose, timing — gets adjusted to the coffee in front of me."
           />
         </Reveal>

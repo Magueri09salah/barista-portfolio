@@ -128,7 +128,7 @@
 /* ---------------------------------------------------------------- Tiles */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
   gap: var(--s4);
   margin-top: var(--s8);
 }
@@ -641,7 +641,7 @@
 /* --------------------------------------------------------- Field layout */
 .editorGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   gap: var(--s5);
   padding: var(--s6);
   background: var(--bg-raised);
@@ -848,7 +848,7 @@
 }
 .slotGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: var(--s5);
   margin-top: var(--s6);
 }
@@ -971,10 +971,27 @@
 .loginCard {
   width: 100%;
   max-width: 420px;
+  min-width: 0;
   padding: var(--s9);
   background: var(--bg-raised);
   border-radius: var(--r-xl);
   box-shadow: var(--elev-4);
+}
+
+/* On a 320px phone the card's own padding plus a text input is wider than the
+   screen, and the centred grid track floors at that, pushing the page sideways.
+   The card is the whole page here, so it can afford tighter padding. */
+@media (max-width: 400px) {
+  .loginPage {
+    padding: var(--s4);
+  }
+  .loginCard {
+    padding: var(--s6);
+  }
+  .loginCard input {
+    width: 100%;
+    min-width: 0;
+  }
 }
 .loginMark {
   display: flex;
@@ -1046,7 +1063,7 @@
 /* ----------------------------------------------------------- Responsive */
 @media (max-width: 1024px) {
   .detailGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .detailSide {
     position: static;
@@ -1058,6 +1075,16 @@
   .barInner {
     padding-inline: var(--s5);
   }
+  /* Five links in a row are wider than a phone. Let them fall to a second
+     line rather than push the whole page sideways. */
+  .barInner {
+    flex-wrap: wrap;
+    gap: var(--s3) var(--s5);
+  }
+  .barActions {
+    flex-wrap: wrap;
+    gap: var(--s4);
+  }
   .row {
     grid-template-columns: 8px minmax(0, 1fr) auto;
     row-gap: var(--s3);
@@ -1067,5 +1094,16 @@
   }
   .rowDate {
     grid-column: 2 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .sectionRow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s3);
+    align-items: start;
+  }
+  .editorHead {
+    gap: var(--s4);
   }
 }

@@ -28,12 +28,13 @@
 }
 .phaseList {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
   gap: var(--s7);
   margin-top: var(--s10);
 }
 .phase {
   display: grid;
+  min-width: 0;
   grid-template-columns: auto minmax(0, 1fr);
   gap: var(--s6);
   padding: var(--s7);
@@ -89,7 +90,7 @@
 
 @media (max-width: 640px) {
   .phase {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--s4);
     padding: var(--s6);
   }

@@ -16,6 +16,7 @@
 .rail {
   position: sticky;
   top: 120px;
+  min-width: 0;
 }
 .railList {
   display: flex;
@@ -93,6 +94,7 @@
 
 /* ---------------------------------------------------------------- Panel */
 .panel {
+  min-width: 0;
   background: var(--bg-raised);
   border: 1px solid var(--border-subtle);
   border-radius: var(--r-xl);
@@ -117,7 +119,7 @@
 /* ------------------------------------------------------- Checkbox cards */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
   gap: var(--s4);
   margin: var(--s8) 0 0;
   padding: 0;
@@ -304,7 +306,7 @@
 }
 .pairs {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
   gap: var(--s6);
 }
 .pairs .field {
@@ -401,7 +403,7 @@
 /* --------------------------------------------------------- Breakpoints */
 @media (max-width: 1024px) {
   .wrap {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--s8);
   }
   .rail {
@@ -413,6 +415,12 @@
     overflow-x: auto;
     padding-bottom: var(--s2);
     scrollbar-width: thin;
+  }
+  /* The list items are the flex children here, not the buttons inside them.
+     Left to shrink, they each take an equal 79px share of the row and the
+     step's nowrap label spills outside its own background. */
+  .railList > li {
+    flex: 0 0 auto;
   }
   .railStep {
     width: auto;
@@ -435,10 +443,10 @@
     border-radius: var(--r-lg);
   }
   .grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .chip {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--s1);
     border-radius: var(--r-lg);
   }

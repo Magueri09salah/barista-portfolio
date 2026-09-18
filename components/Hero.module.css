@@ -187,7 +187,7 @@
 
 @media (max-width: 900px) {
   .inner {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     min-height: auto;
     padding-block: var(--s12) var(--s11);
     gap: var(--s9);

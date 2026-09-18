@@ -290,7 +290,7 @@
 }
 @media (max-width: 900px) {
   .headSplit {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--s6);
     align-items: start;
   }
